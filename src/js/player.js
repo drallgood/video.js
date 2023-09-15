@@ -3095,22 +3095,22 @@ class Player extends Component {
       return window.documentPictureInPicture.requestWindow({
         // The aspect ratio won't be correct, Chrome bug https://crbug.com/1407629
         width: this.videoWidth(),
-        height: this.videoHeight(),
-        copyStyleSheets: true
+        height: this.videoHeight()
       }).then(pipWindow => {
+        Dom.copyStyleSheetsToWindow(pipWindow);
         this.el_.parentNode.insertBefore(pipContainer, this.el_);
 
-        pipWindow.document.body.append(this.el_);
+        pipWindow.document.body.appendChild(this.el_);
         pipWindow.document.body.classList.add('vjs-pip-window');
 
         this.player_.isInPictureInPicture(true);
         this.player_.trigger('enterpictureinpicture');
 
         // Listen for the PiP closing event to move the video back.
-        pipWindow.addEventListener('unload', (event) => {
+        pipWindow.addEventListener('pagehide', (event) => {
           const pipVideo = event.target.querySelector('.video-js');
 
-          pipContainer.replaceWith(pipVideo);
+          pipContainer.parentNode.replaceChild(pipVideo, pipContainer);
           this.player_.isInPictureInPicture(false);
           this.player_.trigger('leavepictureinpicture');
         });
@@ -3142,7 +3142,7 @@ class Player extends Component {
    */
   exitPictureInPicture() {
     if (window.documentPictureInPicture && window.documentPictureInPicture.window) {
-      // With documentPictureInPicture, Player#leavepictureinpicture is fired in the unload handler
+      // With documentPictureInPicture, Player#leavepictureinpicture is fired in the pagehide handler
       window.documentPictureInPicture.window.close();
       return Promise.resolve();
     }
