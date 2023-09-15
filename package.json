@@ -78,8 +78,7 @@
     "netlify-docs": "node ./build/netlify-docs.js",
     "prepublishOnly": "run-p build",
     "version": "is-prerelease || npm run changelog && git add CHANGELOG.md",
-    "zip": "cd dist && cross-env bestzip \"./video-js-${npm_package_version}.zip\" * && cd ..",
-    "install":"npm install"
+    "zip": "cd dist && cross-env bestzip \"./video-js-${npm_package_version}.zip\" * && cd .."
   },
   "repository": {
     "type": "git",
